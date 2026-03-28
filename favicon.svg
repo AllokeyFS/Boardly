@@ -1,0 +1,14 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="sh">
+      <feDropShadow dx="3" dy="5" stdDeviation="6" flood-color="#00000030"/>
+    </filter>
+  </defs>
+  <g transform="rotate(-7, 100, 105)" filter="url(#sh)">
+    <path d="M145 172 Q160 155 178 152 L178 172 Z" fill="#00000018"/>
+    <path d="M28 24 L178 24 Q178 24 178 24 L178 152 Q160 155 145 172 L28 172 Q24 172 24 168 L24 28 Q24 24 28 24 Z" fill="#5BC8E8"/>
+    <path d="M24 24 L178 24 L178 65 L24 65 Z" fill="#7DD8F0" opacity="0.45"/>
+    <path d="M145 172 Q160 155 178 152 L178 172 Z" fill="#2E9BBF"/>
+    <line x1="145" y1="172" x2="178" y2="152" stroke="#2089AB" stroke-width="0.8" opacity="0.5"/>
+  </g>
+</svg>
