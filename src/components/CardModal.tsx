@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import type { Card, Priority } from '../types/kanban'
@@ -27,7 +28,6 @@ export function CardModal({ card, columnId, onClose }: Props) {
 
   function handleSave() {
     if (!title.trim()) return
-
     dispatch({
       type: 'CARD_UPDATE',
       cardId: card.id,
@@ -38,7 +38,9 @@ export function CardModal({ card, columnId, onClose }: Props) {
         dueDate:     dueDate || undefined,
       },
     })
-
+    if (priorityChanged) {
+      dispatch({ type: 'CARD_SORT_COLUMN', columnId })
+    }
     onClose()
   }
 
@@ -47,7 +49,7 @@ export function CardModal({ card, columnId, onClose }: Props) {
     onClose()
   }
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <motion.div
         key="backdrop"
@@ -56,7 +58,8 @@ export function CardModal({ card, columnId, onClose }: Props) {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.15 }}
         onClick={onClose}
-        className="fixed inset-0 bg-black/40 dark:bg-black/60 z-40"
+        style={{ position: 'fixed', inset: 0, zIndex: 9998 }}
+        className="bg-black/40 dark:bg-black/60"
       />
 
       <motion.div
@@ -65,11 +68,13 @@ export function CardModal({ card, columnId, onClose }: Props) {
         animate={{ opacity: 1, scale: 1,    y: 0  }}
         exit={{    opacity: 0, scale: 0.95, y: 10 }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+        style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none' }}
+        className="flex items-center justify-center p-4"
       >
         <div
           onClick={e => e.stopPropagation()}
-          className="pointer-events-auto w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
+          style={{ pointerEvents: 'auto' }}
+          className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden"
         >
           {/* Шапка */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
@@ -86,8 +91,6 @@ export function CardModal({ card, columnId, onClose }: Props) {
 
           {/* Контент */}
           <div className="px-5 py-4 flex flex-col gap-4">
-
-            {/* Заголовок */}
             <div>
               <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
                 Title
@@ -101,7 +104,6 @@ export function CardModal({ card, columnId, onClose }: Props) {
               />
             </div>
 
-            {/* Описание */}
             <div>
               <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
                 Description
@@ -115,7 +117,6 @@ export function CardModal({ card, columnId, onClose }: Props) {
               />
             </div>
 
-            {/* Приоритет */}
             <div>
               <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
                 Priority
@@ -142,7 +143,6 @@ export function CardModal({ card, columnId, onClose }: Props) {
               )}
             </div>
 
-            {/* Дедлайн */}
             <div>
               <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
                 Due date
@@ -182,6 +182,7 @@ export function CardModal({ card, columnId, onClose }: Props) {
           </div>
         </div>
       </motion.div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }

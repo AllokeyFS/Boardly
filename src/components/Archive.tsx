@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useKanban } from '../context/KanbanContext'
 
@@ -19,19 +20,19 @@ export function Archive({ onClose }: Props) {
   const { state, dispatch } = useKanban()
   const archive = state.archive ?? []
 
-  // Находим первую Done колонку для восстановления
   const doneColumnId = state.columns.find(
     c => c.title.toLowerCase() === 'done'
   )?.id ?? state.columns[state.columns.length - 1]?.id
 
-  return (
+  return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
       onClick={onClose}
-      className="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 flex items-center justify-center p-4"
+      style={{ position: 'fixed', inset: 0, zIndex: 9999 }}
+      className="bg-black/40 dark:bg-black/60 flex items-center justify-center p-4"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -93,7 +94,6 @@ export function Archive({ onClose }: Props) {
                     transition={{ duration: 0.15 }}
                     className="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-3 flex items-start gap-3 group"
                   >
-                    {/* Иконка выполнено */}
                     <div className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <span className="text-green-600 dark:text-green-400 text-xs">✓</span>
                     </div>
@@ -121,7 +121,6 @@ export function Archive({ onClose }: Props) {
                       </div>
                     </div>
 
-                    {/* Восстановить */}
                     {doneColumnId && (
                       <button
                         onClick={() => dispatch({
@@ -142,6 +141,7 @@ export function Archive({ onClose }: Props) {
           )}
         </div>
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body
   )
 }
